@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
-def androidSdkVersion = '27.0.3'
+def androidSdkVersion = "26.0.2"
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 26
     buildToolsVersion androidSdkVersion
 
     defaultConfig {
         applicationId "com.udacity.ronanlima.ndfilmesfamosos1"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
