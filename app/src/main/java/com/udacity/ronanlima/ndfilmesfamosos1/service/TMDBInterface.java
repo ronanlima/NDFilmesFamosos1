@@ -7,6 +7,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface TMDBInterface {
-    @GET("/discover/movie?sort_by=popularity.desc/")
-    Call<JsonObject> getMostPopularMovies(@Query("api_key") String apiKey);
+    @GET("3/discover/movie?sort_by=popularity.desc/")
+    Call<JsonObject> getMostPopularMovies(@Query("api_key") String apiKey, @Query("page") Integer page);
 }

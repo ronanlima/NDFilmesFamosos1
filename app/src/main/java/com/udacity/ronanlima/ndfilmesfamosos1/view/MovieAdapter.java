@@ -8,7 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.udacity.ronanlima.ndfilmesfamosos1.BuildConfig;
 import com.udacity.ronanlima.ndfilmesfamosos1.R;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.TheMovieDB;
 
 import java.util.List;
 
@@ -17,7 +20,7 @@ import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private List<String> listMovies;
+    private List<TheMovieDB> listMovies;
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -29,8 +32,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        String s = listMovies.get(position);
-        holder.getTvMovieName().setText(s);
+        TheMovieDB theMovieDB = listMovies.get(position);
+        holder.getTvMovieName().setText(theMovieDB.getTitle());
+        Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_TMDB, theMovieDB.getPoster_path().substring(1))).into(holder.getIvMovie());
     }
 
     @Override
@@ -38,20 +42,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return listMovies != null ? listMovies.size() : 0;
     }
 
-    public List<String> getListMovies() {
+    public List<TheMovieDB> getListMovies() {
         return listMovies;
     }
 
-    public void setListMovies(List<String> listMovies) {
+    public void setListMovies(List<TheMovieDB> listMovies) {
         this.listMovies = listMovies;
         notifyDataSetChanged();
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.iv_movie)
-        private ImageView ivMovie;
+        ImageView ivMovie;
         @BindView(R.id.tv_movie_name)
-        private TextView tvMovieName;
+        TextView tvMovieName;
 
         public MovieViewHolder(View itemView) {
             super(itemView);

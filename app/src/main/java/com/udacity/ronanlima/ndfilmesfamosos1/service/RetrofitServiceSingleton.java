@@ -3,6 +3,7 @@ package com.udacity.ronanlima.ndfilmesfamosos1.service;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.udacity.ronanlima.ndfilmesfamosos1.BuildConfig;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitServiceSingleton {
     public static final String TAG = RetrofitServiceSingleton.class.getCanonicalName().toUpperCase();
 
-    private static final String BASE_URL = "https://api.themoviedb.org/3/";
+    private static final String BASE_URL = BuildConfig.BASE_URL_TMDB;
     public static RetrofitServiceSingleton instance;
     private Retrofit retrofit;
 
