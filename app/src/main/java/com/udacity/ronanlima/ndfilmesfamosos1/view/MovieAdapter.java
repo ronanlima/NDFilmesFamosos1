@@ -13,6 +13,7 @@ import com.udacity.ronanlima.ndfilmesfamosos1.BuildConfig;
 import com.udacity.ronanlima.ndfilmesfamosos1.R;
 import com.udacity.ronanlima.ndfilmesfamosos1.bean.TheMovieDB;
 
+import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
@@ -21,6 +22,7 @@ import butterknife.ButterKnife;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private List<TheMovieDB> listMovies;
+    private AdapterClickListener adapterClickListener;
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -32,9 +34,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        TheMovieDB theMovieDB = listMovies.get(position);
+        final TheMovieDB theMovieDB = listMovies.get(position);
         holder.getTvMovieName().setText(theMovieDB.getTitle());
-        Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_TMDB, theMovieDB.getPoster_path().substring(1))).into(holder.getIvMovie());
+        Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, theMovieDB.getPoster_path().substring(1))).into(holder.getIvMovie());
+        holder.getIvMovie().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapterClickListener.onMovieClicked(theMovieDB.getId());
+            }
+        });
     }
 
     @Override
@@ -49,6 +57,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void setListMovies(List<TheMovieDB> listMovies) {
         this.listMovies = listMovies;
         notifyDataSetChanged();
+    }
+
+    public AdapterClickListener getAdapterClickListener() {
+        return adapterClickListener;
+    }
+
+    public void setAdapterClickListener(AdapterClickListener adapterClickListener) {
+        this.adapterClickListener = adapterClickListener;
+    }
+
+    public interface AdapterClickListener extends Serializable {
+        void onMovieClicked(Integer idMovie);
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {

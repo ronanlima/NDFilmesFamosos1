@@ -1,5 +1,6 @@
 package com.udacity.ronanlima.ndfilmesfamosos1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -8,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -30,18 +33,33 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
     @BindView(R.id.rv_movies)
     RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
+    @BindView(R.id.pb)
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        progressBar.setVisibility(View.VISIBLE);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         movieAdapter = new MovieAdapter();
+        movieAdapter.setAdapterClickListener(createListenerToDetailMovie());
         recyclerView.setAdapter(movieAdapter);
         getMostPopularMovies();
+    }
+
+    private MovieAdapter.AdapterClickListener createListenerToDetailMovie() {
+        return new MovieAdapter.AdapterClickListener() {
+            @Override
+            public void onMovieClicked(Integer idMovie) {
+                Intent i = new Intent(getBaseContext(), DetalheActivity.class);
+                i.putExtra("movieId", idMovie);
+                startActivity(i);
+            }
+        };
     }
 
     private void getMostPopularMovies() {
@@ -69,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
 
     @Override
     public void onSearchSuccess(JsonObject result) {
+        progressBar.setVisibility(View.INVISIBLE);
         JsonArray results = result.getAsJsonArray("results");
         Iterator<JsonElement> iterator = results.iterator();
         List<TheMovieDB> list = new ArrayList<>();
@@ -84,6 +103,6 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
 
     @Override
     public void onSearchError(Call<JsonObject> call, Throwable throwable) {
-
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

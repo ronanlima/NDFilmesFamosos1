@@ -13,7 +13,25 @@ public class TheMovieDBConsumer {
     private static RetrofitServiceSingleton retrofit = RetrofitServiceSingleton.getInstance();
 
     public static void getTopRatedMovies(final ListenerResultSearchTMDB listener) {
-        retrofit.getRetrofit().create(TMDBInterface.class).getMostPopularMovies(BuildConfig.API_KEY, 1/*TODO receber page por par‚metro*/).enqueue(new Callback<JsonObject>() {
+        retrofit.getRetrofit().create(TMDBInterface.class).getMostPopularMovies(BuildConfig.API_KEY, 1/*TODO receber page por par√¢metro*/).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    listener.onSearchSuccess(response.body());
+                } else {
+                    listener.onSearchError(call, new Throwable());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                listener.onSearchError(call, t);
+            }
+        });
+    }
+
+    public static void getInfoAboutMovie(final ListenerResultSearchTMDB listener, Integer id) {
+        retrofit.getRetrofit().create(TMDBInterface.class).getInfoAboutMovie(id, BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
