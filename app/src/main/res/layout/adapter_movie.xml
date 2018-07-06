@@ -43,6 +43,7 @@
                 android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:maxEms="15"
+                android:ellipsize="end"
                 android:padding="10dp"
                 android:singleLine="true"
                 android:text="@string/label_movie_name"
