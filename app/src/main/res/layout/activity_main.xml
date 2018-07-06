@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.udacity.ronanlima.ndfilmesfamosos1.MainActivity"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/gradient_background"
+    tools:context="com.udacity.ronanlima.ndfilmesfamosos1.MainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <include layout="@layout/layout_no_wifi" android:visibility="invisible"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_movies"

@@ -36,7 +36,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         final TheMovieDB theMovieDB = listMovies.get(position);
         holder.getTvMovieName().setText(theMovieDB.getTitle());
-        Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, theMovieDB.getPoster_path().substring(1))).into(holder.getIvMovie());
+        if (theMovieDB.getPoster_path() != null) {
+            Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, theMovieDB.getPoster_path().substring(1))).into(holder.getIvMovie());
+        }
         holder.getIvMovie().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
