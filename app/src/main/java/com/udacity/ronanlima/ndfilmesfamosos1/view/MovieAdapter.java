@@ -42,7 +42,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         holder.getIvMovie().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapterClickListener.onMovieClicked(theMovieDB.getId());
+                adapterClickListener.onMovieClicked(theMovieDB.getId(), theMovieDB.getOriginal_title());
             }
         });
     }
@@ -70,7 +70,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     public interface AdapterClickListener extends Serializable {
-        void onMovieClicked(Integer idMovie);
+        void onMovieClicked(Integer idMovie, String originalTitle);
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {

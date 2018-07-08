@@ -5,6 +5,7 @@ public class TheMovieDB {
     private Integer id;
     private Double vote_average;
     private String title;
+    private String original_title;
     private String poster_path;
     private String backdrop_path;
     private String overview;
@@ -40,6 +41,14 @@ public class TheMovieDB {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getOriginal_title() {
+        return original_title;
+    }
+
+    public void setOriginal_title(String original_title) {
+        this.original_title = original_title;
     }
 
     public String getPoster_path() {

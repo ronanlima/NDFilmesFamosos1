@@ -87,9 +87,10 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
     private MovieAdapter.AdapterClickListener createListenerToDetailMovie() {
         return new MovieAdapter.AdapterClickListener() {
             @Override
-            public void onMovieClicked(Integer idMovie) {
+            public void onMovieClicked(Integer idMovie, String originalTitle) {
                 Intent i = new Intent(getBaseContext(), DetalheActivity.class);
                 i.putExtra("movieId", idMovie);
+                i.putExtra("originalTitle", originalTitle);
                 startActivity(i);
             }
         };
