@@ -1,12 +1,7 @@
 package com.udacity.ronanlima.ndfilmesfamosos1;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -30,10 +25,9 @@ import retrofit2.Call;
 public class DetalheActivity extends AppCompatActivity implements TheMovieDBConsumer.ListenerResultSearchTMDB {
 
     private Integer idMovie;
+    private String originalTitle;
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
     @BindView(R.id.tv_average_fab)
     TextView tvAverageFab;
     @BindView(R.id.pb)
@@ -60,25 +54,11 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar.setVisibility(View.VISIBLE);
         if (getIntent().hasExtra("movieId")) {
-            collapsingToolbarLayout.setTitle(getIntent().getStringExtra("originalTitle"));
+            originalTitle = getIntent().getStringExtra("originalTitle");
             idMovie = getIntent().getIntExtra("movieId", 0);
+            collapsingToolbarLayout.setTitle(originalTitle);
             verifyInternetConnection();
         }
-    }
-
-    private Bitmap textAsBitmap(String text, float size, int textColor) {
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setTextSize(size);
-        paint.setColor(textColor);
-        paint.setTextAlign(Paint.Align.CENTER);
-        float baseline = -paint.ascent();
-        int width = (int) (paint.measureText(text) + 0.0f);
-        int height = (int) (baseline + paint.descent() + 0.0f);
-        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(image);
-        canvas.drawText(text, 0, baseline, paint);
-        return image;
     }
 
     @Override
@@ -98,7 +78,6 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
         if (result.get("poster_path") != null) {
             Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, result.get("poster_path").getAsString().substring(1))).into(ivPoster);
         }
-//        fab.setImageBitmap(textAsBitmap(result.get("vote_average").getAsString(), 10f, Color.WHITE));
         tvAverageFab.setText(result.get("vote_average").getAsString());
         tvSinopse.setText(result.get("overview").getAsString());
         tvDataLancamento.setText(result.get("release_date").getAsString());
