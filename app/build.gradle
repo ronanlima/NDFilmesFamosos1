@@ -1,12 +1,7 @@
 apply plugin: 'com.android.application'
 
-def androidSdkVersion = "27.0.2"
-final retrofitVersion = '2.4.0'
-final butterKnifeVersion = '8.8.1'
-
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.udacity.ronanlima.ndfilmesfamosos1"
@@ -33,6 +28,9 @@ android {
 
 }
 
+def androidSdkVersion = '27.0.2'
+def retrofitVersion = '2.4.0'
+def butterKnifeVersion = '8.8.1'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
