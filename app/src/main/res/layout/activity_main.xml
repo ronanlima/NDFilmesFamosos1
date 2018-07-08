@@ -34,5 +34,4 @@
             android:visibility="invisible" />
     </FrameLayout>
 
-
 </android.support.constraint.ConstraintLayout>

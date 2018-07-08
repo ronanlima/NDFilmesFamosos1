@@ -6,4 +6,5 @@
     <string name="msg_no_wifi">Sem conexão com a internet</string>
     <string name="label_sinopse">Sinopse</string>
     <string name="label_data_lancamento">Data de lançamento</string>
+    <string name="content_description_poster_movie">Imagem do filme</string>
 </resources>

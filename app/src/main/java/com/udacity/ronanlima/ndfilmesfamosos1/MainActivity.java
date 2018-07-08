@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity implements TheMovieDBConsumer.ListenerResultSearchTMDB {
     public static final Integer COD_PERMISSION_NETWORK = 1;
+    public static final int NUMBER_OF_GRID_COLUMNS = 2;
 
     @BindView(R.id.ll_no_wifi)
     LinearLayout linearNoWifi;
@@ -66,9 +68,10 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
     }
 
     private void init() {
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, NUMBER_OF_GRID_COLUMNS, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         movieAdapter = new MovieAdapter();
         movieAdapter.setAdapterClickListener(createListenerToDetailMovie());
         recyclerView.setAdapter(movieAdapter);
@@ -79,9 +82,13 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
         if (NetworkUtils.isConnected(this)) {
             TheMovieDBConsumer.getPopularMovies(this);
         } else {
-            progressBar.setVisibility(View.INVISIBLE);
-            linearNoWifi.setVisibility(View.VISIBLE);
+            showLayoutNoConnectivity(View.VISIBLE);
         }
+    }
+
+    private void showLayoutNoConnectivity(int visible) {
+        progressBar.setVisibility(View.INVISIBLE);
+        linearNoWifi.setVisibility(visible);
     }
 
     private MovieAdapter.AdapterClickListener createListenerToDetailMovie() {
@@ -109,10 +116,18 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
 
         switch (item.getItemId()) {
             case R.id.action_top_rated:
-                TheMovieDBConsumer.getTopRatedMovies(this);
+                if (NetworkUtils.isConnected(this)) {
+                    TheMovieDBConsumer.getTopRatedMovies(this);
+                } else {
+                    showLayoutNoConnectivity(View.VISIBLE);
+                }
                 break;
             case R.id.action_most_popular:
-                TheMovieDBConsumer.getPopularMovies(this);
+                if (NetworkUtils.isConnected(this)) {
+                    TheMovieDBConsumer.getPopularMovies(this);
+                } else {
+                    showLayoutNoConnectivity(View.VISIBLE);
+                }
                 break;
             default:
                 break;
@@ -122,8 +137,7 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
 
     @Override
     public void onSearchSuccess(JsonObject result) {
-        progressBar.setVisibility(View.INVISIBLE);
-        linearNoWifi.setVisibility(View.INVISIBLE);
+        showLayoutNoConnectivity(View.INVISIBLE);
         JsonArray results = result.getAsJsonArray("results");
         Iterator<JsonElement> iterator = results.iterator();
         List<TheMovieDB> list = new ArrayList<>();
@@ -140,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
 
     @Override
     public void onSearchError(Call<JsonObject> call, Throwable throwable) {
-        progressBar.setVisibility(View.INVISIBLE);
-        linearNoWifi.setVisibility(View.INVISIBLE);
+        showLayoutNoConnectivity(View.INVISIBLE);
     }
 }
