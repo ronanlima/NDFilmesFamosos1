@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.udacity.ronanlima.ndfilmesfamosos1.DetalheActivity">
-
+    <!-- Trabalho com coordinatorlayout seguindo os passos do tutorial no Medium. (https://medium.com/android-dev-br/design-support-library-c2c7aebd8cb) -->
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -34,12 +34,13 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
+    <!-- Tratamento com o FAB, para colocação de 'vote_average', obtido através do link no stackoverflow https://stackoverflow.com/questions/33671196/floatingactionbutton-with-text-instead-of-image-->
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
         app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|right"
-        android:layout_marginRight="8dp">
+        app:layout_anchorGravity="bottom|right">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
@@ -50,11 +51,11 @@
             android:id="@+id/tv_average_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:elevation="16dp"
             android:text="7.7"
-            android:layout_gravity="center"
-            android:textColor="@android:color/white"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
     </FrameLayout>
 
     <ProgressBar
@@ -64,7 +65,9 @@
         android:layout_gravity="center"
         android:visibility="invisible" />
 
-    <include layout="@layout/layout_no_wifi" android:visibility="invisible" />
+    <include
+        layout="@layout/layout_no_wifi"
+        android:visibility="invisible" />
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/detail_container"
@@ -100,9 +103,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
+                android:text="@string/label_data_lancamento"
                 android:textSize="22sp"
-                android:textStyle="bold"
-                android:text="@string/label_data_lancamento" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_data_lancamento"
