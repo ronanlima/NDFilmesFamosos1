@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="review_margin_left_recycler_view">32dp</dimen>
+    <dimen name="review_margin_start_recycler_view">@dimen/review_margin_left_recycler_view</dimen>
+    <dimen name="review_margin_right_recycler_view">32dp</dimen>
+    <dimen name="review_margin_end_recycler_view">@dimen/review_margin_right_recycler_view</dimen>
+    <dimen name="review_margin_top_recycler_view">16dp</dimen>
+    <dimen name="review_margin_bottom_recycler_view">8dp</dimen>
+    <dimen name="review_padding_list_item_recycler_view">16dp</dimen>
+
+    <dimen name="review_margin_left_list_item">8dp</dimen>
+    <dimen name="review_margin_start_list_item">@dimen/review_margin_left_list_item</dimen>
+    <dimen name="review_margin_right_list_item">8dp</dimen>
+    <dimen name="review_margin_end_list_item">@dimen/review_margin_right_list_item</dimen>
+    <dimen name="review_margin_top_list_item">8dp</dimen>
+    <dimen name="review_pading_list_item">10dp</dimen>
+</resources>

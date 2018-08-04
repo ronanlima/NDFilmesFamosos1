@@ -9,18 +9,18 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_KEY", '"CHANGEME"'
+            buildConfigField "String", "API_KEY", '"0e59d0d4cebf9cd24c581b082db608fe"'
             buildConfigField "String", "BASE_URL_TMDB", '"https://api.themoviedb.org/"'
             buildConfigField "String", "BASE_URL_IMG_POSTER", '"https://image.tmdb.org/t/p/w500/"'
         }
         debug {
-            buildConfigField "String", "API_KEY", '"CHANGEME"'
+            buildConfigField "String", "API_KEY", '"0e59d0d4cebf9cd24c581b082db608fe"'
             buildConfigField "String", "BASE_URL_TMDB", '"https://api.themoviedb.org/"'
             buildConfigField "String", "BASE_URL_IMG_POSTER", '"https://image.tmdb.org/t/p/w500/"'
         }
@@ -44,7 +44,8 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation 'com.squareup.picasso:picasso:2.71828'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation "com.android.support:palette-v7:$androidSdkVersion"
+//    testImplementation 'junit:junit:4.12'
+//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

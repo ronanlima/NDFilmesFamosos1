@@ -61,27 +61,40 @@
 
             <TextView
                 style="@style/style_label_movie_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="@string/label_sinopse" />
 
             <TextView
                 android:id="@+id/tv_sinopse"
                 style="@style/style_content_movie_detail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:text="@string/tools_text_sinopse_filme" />
 
             <TextView
                 style="@style/style_label_movie_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="@string/label_data_lancamento" />
 
             <TextView
                 android:id="@+id/tv_data_lancamento"
                 style="@style/style_content_movie_detail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:text="04/04/2018" />
+
+            <TextView
+                android:id="@+id/tv_reviews"
+                style="@style/style_label_movie_detail"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/label_reviews" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_reviews"
+                style="@style/style_recyclerview_movie_detail"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@drawable/shape_recyclerview" />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
@@ -105,9 +118,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:elevation="16dp"
-            android:text="7.7"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            tools:text="7.7" />
     </FrameLayout>
 
 

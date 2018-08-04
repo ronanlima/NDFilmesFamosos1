@@ -21,14 +21,40 @@
         <item name="android:layout_marginLeft">8dp</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-smallcaps</item>
     </style>
 
     <style name="style_content_movie_detail">
-        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">8dp</item>
         <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="style_recyclerview_movie_detail">
+        <!--<item name="android:padding">@dimen/review_padding_list_item_recycler_view</item>-->
+        <item name="android:layout_marginLeft">@dimen/review_margin_left_recycler_view</item>
+        <item name="android:layout_marginStart">@dimen/review_margin_start_recycler_view</item>
+        <item name="android:layout_marginRight">@dimen/review_margin_right_recycler_view</item>
+        <item name="android:layout_marginEnd">@dimen/review_margin_end_recycler_view</item>
+        <item name="android:layout_marginTop">@dimen/review_margin_top_recycler_view</item>
+        <item name="android:layout_marginBottom">@dimen/review_margin_bottom_recycler_view</item>
+    </style>
+
+    <style name="style_list_item_review">
+        <item name="android:layout_marginLeft">@dimen/review_margin_left_list_item</item>
+        <item name="android:layout_marginStart">@dimen/review_margin_start_list_item</item>
+        <item name="android:layout_marginRight">@dimen/review_margin_right_list_item</item>
+        <item name="android:layout_marginEnd">@dimen/review_margin_end_list_item</item>
+        <item name="android:layout_marginTop">@dimen/review_margin_top_list_item</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
 </resources>

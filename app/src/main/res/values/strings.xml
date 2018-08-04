@@ -6,5 +6,8 @@
     <string name="msg_no_wifi">Sem conexão com a internet</string>
     <string name="label_sinopse">Sinopse</string>
     <string name="label_data_lancamento">Data de lançamento</string>
+    <string name="label_reviews">Revisões do público</string>
     <string name="content_description_poster_movie">Imagem do filme</string>
+    <string name="tools_text_sinopse_filme">Aqui vai a incrível sinopse deste filme aclamado pela crítica</string>
+    <string name="review_example">It is a bold undertaking, to readjust what is expected of the MCU/Avengers formula, and there are moments when the sheer scale and momentum match the narrative ambition...</string>
 </resources>

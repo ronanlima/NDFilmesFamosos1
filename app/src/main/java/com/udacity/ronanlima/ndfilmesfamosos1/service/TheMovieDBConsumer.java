@@ -48,8 +48,26 @@ public class TheMovieDBConsumer {
         });
     }
 
-    public static void getInfoAboutMovie(final ListenerResultSearchTMDB listener, Integer id) {
-        serviceSingleton.getRetrofit().create(TMDBInterface.class).getInfoAboutMovie(id, BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
+    public static void getMovieDetail(final ListenerResultSearchTMDB listener, Integer id) {
+        serviceSingleton.getRetrofit().create(TMDBInterface.class).getMovieDetail(id, BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    listener.onSearchSuccess(response.body());
+                } else {
+                    listener.onSearchError(call, new Throwable());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                listener.onSearchError(call, t);
+            }
+        });
+    }
+
+    public static void getMovieReview(final ListenerResultSearchTMDB listener, Integer id) {
+        serviceSingleton.getRetrofit().create(TMDBInterface.class).getMovieReviews(id, BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {

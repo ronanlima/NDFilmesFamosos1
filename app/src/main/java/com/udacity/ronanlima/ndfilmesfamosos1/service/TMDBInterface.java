@@ -15,5 +15,8 @@ public interface TMDBInterface {
     Call<JsonObject> getTopRatedMovies(@Query("api_key") String apiKey);
 
     @GET("3/movie/{movie_id}")
-    Call<JsonObject> getInfoAboutMovie(@Path("movie_id") Integer movieId, @Query("api_key") String apiKey);
+    Call<JsonObject> getMovieDetail(@Path("movie_id") Integer movieId, @Query("api_key") String apiKey);
+
+    @GET("3/movie/{movie_id}/reviews")
+    Call<JsonObject> getMovieReviews(@Path("movie_id") Integer movieId, @Query("api_key") String apiKey);
 }

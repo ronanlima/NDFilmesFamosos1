@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="border_recyclerview">#BDBDBD</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="primaryTextColor">#424242</color>
+    <color name="secondaryTextColor">#757575</color>
 </resources>
