@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.udacity.ronanlima.ndfilmesfamosos1.service.TheMovieDBConsumer;
@@ -34,6 +35,10 @@ import retrofit2.Call;
 public class DetalheActivity extends AppCompatActivity implements TheMovieDBConsumer.ListenerResultSearchTMDB {
 
     public static final boolean HAS_FIXED_SIZE = true;
+    public static final String BUNDLE_MOVIE_TITLE = "movieTitle";
+    public static final String BUNDLE_MOVIE_ID = "movieId";
+    public static final String BUNDLE_JSON_MOVIE = "JSON_MOVIE";
+    public static final String BUNDLE_JSON_REVIEW = "JSON_REVIEW";
     private Integer idMovie;
     private String originalTitle;
     @BindView(R.id.collapsing_toolbar)
@@ -57,6 +62,8 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
     @BindView(R.id.rv_reviews)
     RecyclerView recyclerViewReviews;
     private ReviewAdapter reviewAdapter;
+    private JsonObject jsonMovie;
+    private JsonObject jsonReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +73,42 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar.setVisibility(View.VISIBLE);
-        if (getIntent().hasExtra("movieId")) {
+        if (savedInstanceState != null) {
+            initScreenFromSavedInstance(savedInstanceState);
+        } else if (getIntent().hasExtra(BUNDLE_MOVIE_ID)) {
             originalTitle = getIntent().getStringExtra("originalTitle");
             idMovie = getIntent().getIntExtra("movieId", 0);
-            collapsingToolbarLayout.setTitle(originalTitle);
             verifyInternetConnection();
+        }
+        collapsingToolbarLayout.setTitle(originalTitle);
+    }
+
+    private void initScreenFromSavedInstance(Bundle savedInstanceState) {
+        originalTitle = savedInstanceState.getString(BUNDLE_MOVIE_TITLE);
+        idMovie = savedInstanceState.getInt(BUNDLE_MOVIE_ID);
+        if (savedInstanceState.getString(BUNDLE_JSON_MOVIE) != null) {
+            jsonMovie = (JsonObject) new JsonParser().parse(savedInstanceState.getString(BUNDLE_JSON_MOVIE));
+            initScreenJsonMovie(jsonMovie);
+        }
+        if (savedInstanceState.getString(BUNDLE_JSON_REVIEW) != null) {
+            jsonReview = (JsonObject) new JsonParser().parse(savedInstanceState.getString(BUNDLE_JSON_REVIEW));
+            initScreenJsonReview(jsonReview);
+        }
+        if (savedInstanceState.getString(BUNDLE_JSON_MOVIE) == null || savedInstanceState.getString(BUNDLE_JSON_REVIEW) == null) {
+            verifyInternetConnection();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(BUNDLE_MOVIE_TITLE, originalTitle);
+        outState.putInt(BUNDLE_MOVIE_ID, idMovie);
+        if (jsonMovie != null) {
+            outState.putString(BUNDLE_JSON_MOVIE, jsonMovie.toString());
+        }
+        if (jsonReview != null) {
+            outState.putString(BUNDLE_JSON_REVIEW, jsonReview.toString());
         }
     }
 
@@ -87,35 +125,45 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
     @Override
     public void onSearchSuccess(JsonObject result) {
         if (!result.has("results")) {
-            progressBar.setVisibility(View.INVISIBLE);
-            layoutMovieDetail.setVisibility(View.VISIBLE);
-            if (result.get("poster_path") != null) {
-                final RequestCreator creator = Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, result.get("poster_path").getAsString().substring(1)));
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Bitmap bitmap = creator.get();
-                            setToolbarColor(bitmap);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-                creator.into(ivPoster);
-            }
-            tvAverageFab.setText(result.get("vote_average").getAsString());
-            tvSinopse.setText(result.get("overview").getAsString());
-            tvDataLancamento.setText(result.get("release_date").getAsString());
+            jsonMovie = result;
+            initScreenJsonMovie(result);
         } else {
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            recyclerViewReviews.setLayoutManager(layoutManager);
-            recyclerViewReviews.setItemAnimator(new DefaultItemAnimator());
-            recyclerViewReviews.setHasFixedSize(HAS_FIXED_SIZE);
-            reviewAdapter = new ReviewAdapter();
-            recyclerViewReviews.setAdapter(reviewAdapter);
-            reviewAdapter.setReviews(result.getAsJsonArray("results"));
+            jsonReview = result;
+            initScreenJsonReview(result);
         }
+    }
+
+    private void initScreenJsonReview(JsonObject result) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewReviews.setLayoutManager(layoutManager);
+        recyclerViewReviews.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewReviews.setHasFixedSize(HAS_FIXED_SIZE);
+        reviewAdapter = new ReviewAdapter();
+        recyclerViewReviews.setAdapter(reviewAdapter);
+        reviewAdapter.setReviews(result.getAsJsonArray("results"));
+    }
+
+    private void initScreenJsonMovie(JsonObject result) {
+        progressBar.setVisibility(View.INVISIBLE);
+        layoutMovieDetail.setVisibility(View.VISIBLE);
+        if (result.get("poster_path") != null) {
+            final RequestCreator creator = Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, result.get("poster_path").getAsString().substring(1)));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Bitmap bitmap = creator.get();
+                        setToolbarColor(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            creator.into(ivPoster);
+        }
+        tvAverageFab.setText(result.get("vote_average").getAsString());
+        tvSinopse.setText(result.get("overview").getAsString());
+        tvDataLancamento.setText(result.get("release_date").getAsString());
     }
 
     private void setToolbarColor(Bitmap bitmap) {

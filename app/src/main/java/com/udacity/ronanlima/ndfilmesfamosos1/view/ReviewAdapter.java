@@ -9,10 +9,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.udacity.ronanlima.ndfilmesfamosos1.R;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

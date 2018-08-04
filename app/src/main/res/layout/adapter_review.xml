@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:scrollbars="none"
-    android:layout_height="wrap_content">
+    android:scrollbars="none">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -25,8 +25,8 @@
             android:id="@+id/tv_review"
             style="@style/style_list_item_review"
             android:layout_width="match_parent"
-            android:fontFamily="sans-serif-light"
             android:layout_marginTop="0dp"
+            android:fontFamily="sans-serif-light"
             android:padding="@dimen/review_pading_list_item"
             android:textColor="@color/secondaryTextColor"
             android:textSize="16sp"
