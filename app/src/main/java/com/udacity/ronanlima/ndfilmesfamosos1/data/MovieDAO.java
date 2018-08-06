@@ -8,6 +8,8 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
+
 import java.util.List;
 
 /**
@@ -18,17 +20,17 @@ import java.util.List;
 public interface MovieDAO {
 
     @Query("SELECT * FROM movie")
-    LiveData<List<MovieEntry>> getAllMovies();
+    LiveData<List<Movie>> getAllMovies();
 
     @Insert
-    void insert(MovieEntry movie);
+    void insert(Movie movie);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void update(MovieEntry movie);
+    void update(Movie movie);
 
     @Delete
-    void delete(MovieEntry movie);
+    void delete(Movie movie);
 
     @Query("SELECT * FROM movie WHERE id = :id")
-    LiveData<MovieEntry> findMovieById(int id);
+    LiveData<Movie> findMovieById(int id);
 }

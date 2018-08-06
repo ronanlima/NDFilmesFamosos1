@@ -7,15 +7,20 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
+import com.udacity.ronanlima.ndfilmesfamosos1.view.FragmentFavoriteMovie;
 import com.udacity.ronanlima.ndfilmesfamosos1.view.FragmentPopularMovie;
 import com.udacity.ronanlima.ndfilmesfamosos1.view.FragmentTopRatedMovie;
 import com.udacity.ronanlima.ndfilmesfamosos1.view.MovieAdapter;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         movieListViewModel = ViewModelProviders.of(this).get(MovieListViewModel.class);
-        viewPager.setAdapter(new TabsAdapter(getSupportFragmentManager(), this, movieListViewModel));
+        viewPager.setAdapter(new TabsAdapter(getSupportFragmentManager()));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -81,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
     public MovieAdapter.AdapterClickListener createListenerToDetailMovie() {
         return new MovieAdapter.AdapterClickListener() {
             @Override
-            public void onMovieClicked(Integer idMovie, String originalTitle) {
+            public void onMovieClicked(Movie movie) {
                 Intent i = new Intent(getBaseContext(), DetalheActivity.class);
-                i.putExtra("movieId", idMovie);
-                i.putExtra("originalTitle", originalTitle);
+
+                i.putExtra("movie", movie);
                 startActivity(i);
             }
         };
@@ -93,13 +98,9 @@ public class MainActivity extends AppCompatActivity {
 }
 
 class TabsAdapter extends FragmentStatePagerAdapter {
-    private MainActivity activity;
-    private MovieListViewModel movieListViewModel;
 
-    public TabsAdapter(FragmentManager fm, MainActivity activity, MovieListViewModel movieListViewModel) {
+    public TabsAdapter(FragmentManager fm) {
         super(fm);
-        this.activity = activity;
-        this.movieListViewModel = movieListViewModel;
     }
 
     @Override
@@ -109,18 +110,20 @@ class TabsAdapter extends FragmentStatePagerAdapter {
                 return new FragmentPopularMovie();
             case 1:
                 return new FragmentTopRatedMovie();
+            case 2:
+                return new FragmentFavoriteMovie();
             default:
-                return null;
+                throw new IllegalArgumentException();
         }
     }
 
     @Override
     public int getItemPosition(Object object) {
-        return PagerAdapter.POSITION_NONE;
+        return PagerAdapter.POSITION_UNCHANGED;
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 }

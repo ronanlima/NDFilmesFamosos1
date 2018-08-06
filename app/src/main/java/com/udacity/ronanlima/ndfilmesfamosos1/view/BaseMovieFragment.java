@@ -19,7 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import com.udacity.ronanlima.ndfilmesfamosos1.MainActivity;
 import com.udacity.ronanlima.ndfilmesfamosos1.MovieListViewModel;
 import com.udacity.ronanlima.ndfilmesfamosos1.R;
-import com.udacity.ronanlima.ndfilmesfamosos1.bean.TheMovieDB;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
 import com.udacity.ronanlima.ndfilmesfamosos1.service.TheMovieDBConsumer;
 import com.udacity.ronanlima.ndfilmesfamosos1.utils.NetworkUtils;
 
@@ -44,7 +44,7 @@ public class BaseMovieFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        movieAdapter = new MovieAdapter();
+        setMovieAdapter(new MovieAdapter());
         movieAdapter.setAdapterClickListener(((MainActivity) getActivity()).createListenerToDetailMovie());
         recyclerView.setAdapter(movieAdapter);
 //        verifyInternetConnection(listener, path);
@@ -64,10 +64,10 @@ public class BaseMovieFragment extends Fragment {
         showLayoutNoConnectivity(View.INVISIBLE);
         JsonArray results = result.getAsJsonArray("results");
         Iterator<JsonElement> iterator = results.iterator();
-        List<TheMovieDB> list = new ArrayList<>();
+        List<Movie> list = new ArrayList<>();
         while (iterator.hasNext()) {
             JsonElement json = iterator.next();
-            TheMovieDB tmdb = new Gson().fromJson(json, new TypeToken<TheMovieDB>() {
+            Movie tmdb = new Gson().fromJson(json, new TypeToken<Movie>() {
             }.getType());
             list.add(tmdb);
         }

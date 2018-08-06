@@ -7,8 +7,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
 import com.udacity.ronanlima.ndfilmesfamosos1.data.AppDataBase;
-import com.udacity.ronanlima.ndfilmesfamosos1.data.MovieEntry;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
 public class MovieListViewModel extends AndroidViewModel {
 
     private MutableLiveData<JsonObject> movieLiveData;
-    private LiveData<List<MovieEntry>> favoriteMoviesLiveData;
+    private LiveData<List<Movie>> favoriteMoviesLiveData;
     private AppDataBase mDB;
 
     public MovieListViewModel(@NonNull Application application) {
@@ -38,7 +38,7 @@ public class MovieListViewModel extends AndroidViewModel {
         return movieLiveData;
     }
 
-    public LiveData<List<MovieEntry>> getFavoriteMoviesLiveData() {
+    public LiveData<List<Movie>> getFavoriteMoviesLiveData() {
         return favoriteMoviesLiveData;
     }
 }

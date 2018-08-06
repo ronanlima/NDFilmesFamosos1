@@ -3,14 +3,18 @@ package com.udacity.ronanlima.ndfilmesfamosos1.data;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.util.Log;
+
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
 
 /**
  * Created by rlima on 05/08/18.
  */
 
-@Database(entities = {MovieEntry.class}, version = 1, exportSchema = false)
+@Database(entities = {Movie.class}, version = 1, exportSchema = false)
+@TypeConverters(DateConverter.class)
 public abstract class AppDataBase extends RoomDatabase {
     public static final String TAG = AppDataBase.class.getCanonicalName().toUpperCase();
 

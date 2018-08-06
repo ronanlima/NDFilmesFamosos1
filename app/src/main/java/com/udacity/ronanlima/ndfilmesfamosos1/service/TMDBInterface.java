@@ -1,6 +1,7 @@
 package com.udacity.ronanlima.ndfilmesfamosos1.service;
 
 import com.google.gson.JsonObject;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
