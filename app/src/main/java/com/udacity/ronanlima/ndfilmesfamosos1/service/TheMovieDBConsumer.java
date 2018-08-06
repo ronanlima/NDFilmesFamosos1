@@ -2,6 +2,7 @@ package com.udacity.ronanlima.ndfilmesfamosos1.service;
 
 import com.google.gson.JsonObject;
 import com.udacity.ronanlima.ndfilmesfamosos1.BuildConfig;
+import com.udacity.ronanlima.ndfilmesfamosos1.MovieListViewModel;
 
 import java.io.Serializable;
 
@@ -12,12 +13,12 @@ import retrofit2.Response;
 public class TheMovieDBConsumer {
     private static RetrofitServiceSingleton serviceSingleton = RetrofitServiceSingleton.getInstance();
 
-    public static void getMovies(final ListenerResultSearchTMDB listener, String path) {
+    public static void getMovies(final ListenerResultSearchTMDB listener, final MovieListViewModel movieListViewModel, String path) {
         serviceSingleton.getRetrofit().create(TMDBInterface.class).getMovies(path, BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    listener.onSearchSuccess(response.body());
+                    movieListViewModel.getMovieLiveData().postValue(response.body());
                 } else {
                     listener.onSearchError(call, new Throwable());
                 }
