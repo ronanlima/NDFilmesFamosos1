@@ -1,97 +1,123 @@
 package com.udacity.ronanlima.ndfilmesfamosos1;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import com.udacity.ronanlima.ndfilmesfamosos1.bean.TheMovieDB;
-import com.udacity.ronanlima.ndfilmesfamosos1.service.TheMovieDBConsumer;
-import com.udacity.ronanlima.ndfilmesfamosos1.utils.NetworkUtils;
-import com.udacity.ronanlima.ndfilmesfamosos1.utils.PermissionUtils;
+import com.udacity.ronanlima.ndfilmesfamosos1.data.AppDataBase;
+import com.udacity.ronanlima.ndfilmesfamosos1.view.FragmentPopularMovie;
+import com.udacity.ronanlima.ndfilmesfamosos1.view.FragmentTopRatedMovie;
 import com.udacity.ronanlima.ndfilmesfamosos1.view.MovieAdapter;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
 
-public class MainActivity extends AppCompatActivity implements TheMovieDBConsumer.ListenerResultSearchTMDB {
+public class MainActivity extends AppCompatActivity /**implements TheMovieDBConsumer.ListenerResultSearchTMDB */
+{
     public static final Integer COD_PERMISSION_NETWORK = 1;
     public static final int NUMBER_OF_GRID_COLUMNS = 2;
+    public static final String PATH_POPULAR_MOVIE = "popular";
+    public static final String PATH_TOP_RATED_MOVIE = "top_rated";
 
-    @BindView(R.id.ll_no_wifi)
-    LinearLayout linearNoWifi;
-    @BindView(R.id.rv_movies)
-    RecyclerView recyclerView;
-    private MovieAdapter movieAdapter;
-    @BindView(R.id.pb)
-    ProgressBar progressBar;
+    private BottomNavigationView.OnNavigationItemSelectedListener NAVIGATION_ITEM_SELECTED_LISTENER = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_bottom_popular:
+                    viewPager.setCurrentItem(0);
+                    break;
+                case R.id.action_bottom_rated:
+                    viewPager.setCurrentItem(1);
+                    break;
+
+                case R.id.action_bottom_favorite:
+                    viewPager.setCurrentItem(2);
+                    break;
+                default:
+                    throw new RuntimeException("Ação desconhecida");
+            }
+            return true;
+        }
+    };
+
+
+    @BindView(R.id.bottom_navigation)
+    BottomNavigationView bottomNavigationView;
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
+    private AppDataBase mDB;
+    private JsonObject jsonPopularMovies;
+    private JsonObject jsonTopRatedMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        progressBar.setVisibility(View.VISIBLE);
-        if (PermissionUtils.validate(this, COD_PERMISSION_NETWORK, Manifest.permission.INTERNET)) {
-            init();
-        }
-    }
+        viewPager.setAdapter(new TabsAdapter(getSupportFragmentManager(), this));
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults.length != 0) {
-            if (PermissionUtils.isPermissaoConcedida(grantResults)) {
-                init();
             }
-        }
+
+            @Override
+            public void onPageSelected(int position) {
+//                bottomNavigationView.setSelectedItemId(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        bottomNavigationView.setOnNavigationItemSelectedListener(NAVIGATION_ITEM_SELECTED_LISTENER);
     }
 
-    private void init() {
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, NUMBER_OF_GRID_COLUMNS, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        movieAdapter = new MovieAdapter();
-        movieAdapter.setAdapterClickListener(createListenerToDetailMovie());
-        recyclerView.setAdapter(movieAdapter);
-        verifyInternetConnection();
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        if (grantResults.length != 0) {
+//            if (PermissionUtils.isPermissaoConcedida(grantResults)) {
+//                init();
+//            }
+//        }
+//    }
 
-    private void verifyInternetConnection() {
-        if (NetworkUtils.isConnected(this)) {
-            TheMovieDBConsumer.getPopularMovies(this);
-        } else {
-            showLayoutNoConnectivity(View.VISIBLE);
-        }
-    }
+//    private void init() {
+//        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, NUMBER_OF_GRID_COLUMNS, LinearLayoutManager.VERTICAL, false);
+//        recyclerView.setLayoutManager(layoutManager);
+//        recyclerView.setHasFixedSize(true);
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        movieAdapter = new MovieAdapter();
+//        movieAdapter.setAdapterClickListener(createListenerToDetailMovie());
+//        recyclerView.setAdapter(movieAdapter);
+//        verifyInternetConnection();
+//    }
 
-    private void showLayoutNoConnectivity(int visible) {
-        progressBar.setVisibility(View.INVISIBLE);
-        linearNoWifi.setVisibility(visible);
-    }
+//    public void verifyInternetConnection() {
+//        if (NetworkUtils.isConnected(this)) {
+//            TheMovieDBConsumer.getMovies(this, PATH_POPULAR_MOVIE);
+//        } else {
+////            showLayoutNoConnectivity(View.VISIBLE);
+//        }
+//    }
 
-    private MovieAdapter.AdapterClickListener createListenerToDetailMovie() {
+//    private void showLayoutNoConnectivity(int visible) {
+//        progressBar.setVisibility(View.INVISIBLE);
+//        linearNoWifi.setVisibility(visible);
+//    }
+
+    public MovieAdapter.AdapterClickListener createListenerToDetailMovie() {
         return new MovieAdapter.AdapterClickListener() {
             @Override
             public void onMovieClicked(Integer idMovie, String originalTitle) {
@@ -103,57 +129,102 @@ public class MainActivity extends AppCompatActivity implements TheMovieDBConsume
         };
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+////        movieAdapter.setListMovies(null);
+////        progressBar.setVisibility(View.VISIBLE);
+//
+//        switch (item.getItemId()) {
+//            case R.id.action_top_rated:
+//                if (NetworkUtils.isConnected(this)) {
+//                    TheMovieDBConsumer.getMovies(this, PATH_TOP_RATED_MOVIE);
+//                } /**else {
+//                    showLayoutNoConnectivity(View.VISIBLE);
+//                }*/
+//                break;
+//            case R.id.action_most_popular:
+//                if (NetworkUtils.isConnected(this)) {
+//                    TheMovieDBConsumer.getMovies(this, PATH_POPULAR_MOVIE);
+//                } /**else {
+//                    showLayoutNoConnectivity(View.VISIBLE);
+//                }*/
+//                break;
+//            default:
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+
+//    @Override
+//    public void onSearchSuccess(JsonObject result) {
+////        showLayoutNoConnectivity(View.INVISIBLE);
+//        JsonArray results = result.getAsJsonArray("results");
+//        Iterator<JsonElement> iterator = results.iterator();
+//        List<TheMovieDB> list = new ArrayList<>();
+//        while (iterator.hasNext()) {
+//            JsonElement json = iterator.next();
+//            TheMovieDB tmdb = new Gson().fromJson(json, new TypeToken<TheMovieDB>() {
+//            }.getType());
+//            list.add(tmdb);
+//            Log.d("TAG", json.toString());
+//        }
+//
+//        movieAdapter.setListMovies(list);
+//        setupMovieViewModel();
+//    }
+
+//    private void setupMovieViewModel() {
+//        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+//        mainViewModel.getMovieLiveData().observe(this, new Observer<List<TheMovieDB>>() {
+//            @Override
+//            public void onChanged(@Nullable List<TheMovieDB> movies) {
+//                movieAdapter.setListMovies(movies);
+//            }
+//        });
+//    }
+
+//    @Override
+//    public void onSearchError(Call<JsonObject> call, Throwable throwable) {
+//        showLayoutNoConnectivity(View.INVISIBLE);
+//    }
+}
+
+class TabLayoutListener extends TabLayout.TabLayoutOnPageChangeListener {
+
+    public TabLayoutListener(TabLayout tabLayout) {
+        super(tabLayout);
+    }
+}
+
+class TabsAdapter extends FragmentStatePagerAdapter {
+    private MainActivity activity;
+
+    public TabsAdapter(FragmentManager fm, MainActivity activity) {
+        super(fm);
+        this.activity = activity;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        movieAdapter.setListMovies(null);
-        progressBar.setVisibility(View.VISIBLE);
-
-        switch (item.getItemId()) {
-            case R.id.action_top_rated:
-                if (NetworkUtils.isConnected(this)) {
-                    TheMovieDBConsumer.getTopRatedMovies(this);
-                } else {
-                    showLayoutNoConnectivity(View.VISIBLE);
-                }
-                break;
-            case R.id.action_most_popular:
-                if (NetworkUtils.isConnected(this)) {
-                    TheMovieDBConsumer.getPopularMovies(this);
-                } else {
-                    showLayoutNoConnectivity(View.VISIBLE);
-                }
-                break;
-            default:
-                break;
+    public Fragment getItem(int position) {
+        if (position == 0) {
+            return new FragmentPopularMovie();
         }
-        return super.onOptionsItemSelected(item);
+        return new FragmentTopRatedMovie();
     }
 
     @Override
-    public void onSearchSuccess(JsonObject result) {
-        showLayoutNoConnectivity(View.INVISIBLE);
-        JsonArray results = result.getAsJsonArray("results");
-        Iterator<JsonElement> iterator = results.iterator();
-        List<TheMovieDB> list = new ArrayList<>();
-        while (iterator.hasNext()) {
-            JsonElement json = iterator.next();
-            TheMovieDB tmdb = new Gson().fromJson(json, new TypeToken<TheMovieDB>() {
-            }.getType());
-            list.add(tmdb);
-            Log.d("TAG", json.toString());
-        }
-
-        movieAdapter.setListMovies(list);
+    public int getItemPosition(Object object) {
+        return PagerAdapter.POSITION_NONE;
     }
 
     @Override
-    public void onSearchError(Call<JsonObject> call, Throwable throwable) {
-        showLayoutNoConnectivity(View.INVISIBLE);
+    public int getCount() {
+        return 2;
     }
 }

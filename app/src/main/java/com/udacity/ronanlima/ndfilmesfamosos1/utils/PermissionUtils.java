@@ -2,8 +2,8 @@ package com.udacity.ronanlima.ndfilmesfamosos1.utils;
 
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class PermissionUtils {
      * @param permissions
      * @return
      */
-    public static boolean validate(AppCompatActivity activity, int requestCode, String... permissions) {
+    public static boolean validate(FragmentActivity activity, int requestCode, String permissions) {
         List<String> list = justCheckPermission(activity, permissions);
         if (list.isEmpty()) {
             return true;
@@ -36,7 +36,7 @@ public class PermissionUtils {
      * @param requestCode
      * @param list
      */
-    public static void requestPermissions(AppCompatActivity activity, int requestCode, List<String> list) {
+    public static void requestPermissions(FragmentActivity activity, int requestCode, List<String> list) {
         String[] newPermissions = new String[list.size()];
         list.toArray(newPermissions);
         ActivityCompat.requestPermissions(activity, newPermissions, requestCode);
@@ -50,7 +50,7 @@ public class PermissionUtils {
      * @param permissions
      * @return
      */
-    public static List<String> justCheckPermission(AppCompatActivity activity, String... permissions) {
+    public static List<String> justCheckPermission(FragmentActivity activity, String... permissions) {
         List<String> list = new ArrayList<>();
         for (String perm : permissions) {
             boolean ok = ContextCompat.checkSelfPermission(activity, perm) == PackageManager.PERMISSION_GRANTED;
