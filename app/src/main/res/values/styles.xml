@@ -38,7 +38,15 @@
     </style>
 
     <style name="style_recyclerview_movie_detail">
-        <!--<item name="android:padding">@dimen/review_padding_list_item_recycler_view</item>-->
+        <item name="android:layout_marginLeft">@dimen/review_margin_left_recycler_view</item>
+        <item name="android:layout_marginStart">@dimen/review_margin_start_recycler_view</item>
+        <item name="android:layout_marginRight">@dimen/review_margin_right_recycler_view</item>
+        <item name="android:layout_marginEnd">@dimen/review_margin_end_recycler_view</item>
+        <item name="android:layout_marginTop">@dimen/review_margin_top_recycler_view</item>
+        <item name="android:layout_marginBottom">@dimen/review_margin_bottom_recycler_view</item>
+    </style>
+
+    <style name="style_recyclerview_videos">
         <item name="android:layout_marginLeft">@dimen/review_margin_left_recycler_view</item>
         <item name="android:layout_marginStart">@dimen/review_margin_start_recycler_view</item>
         <item name="android:layout_marginRight">@dimen/review_margin_right_recycler_view</item>

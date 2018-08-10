@@ -16,7 +16,7 @@
         android:id="@+id/action_favorite_movie"
         android:orderInCategory="1"
         android:title="@string/action_favorite"
-        android:icon="@drawable/ic_favorite"
+        android:icon="@drawable/ic_favorite_border"
         android:iconTint="@color/white"
         app:showAsAction="always" />
 </menu>

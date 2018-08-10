@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.udacity.ronanlima.ndfilmesfamosos1.R;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Review;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.ReviewList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
  */
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewVH> {
-    private JsonArray reviews;
+    private ReviewList reviews;
 
     @Override
     public ReviewVH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -30,21 +30,21 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewVH> 
 
     @Override
     public void onBindViewHolder(ReviewVH holder, int position) {
-        JsonElement jsonElement = getReviews().get(position);
-        holder.tvUserName.setText(jsonElement.getAsJsonObject().get("author").getAsString());
-        holder.tvReview.setText(jsonElement.getAsJsonObject().get("content").getAsString());
+        Review review = getReviews().getReviews().get(position);
+        holder.tvUserName.setText(review.getAuthor());
+        holder.tvReview.setText(review.getContent());
     }
 
     @Override
     public int getItemCount() {
-        return reviews != null ? reviews.size() : 0;
+        return reviews != null ? reviews.getReviews().size() : 0;
     }
 
-    public JsonArray getReviews() {
+    public ReviewList getReviews() {
         return reviews;
     }
 
-    public void setReviews(JsonArray reviews) {
+    public void setReviews(ReviewList reviews) {
         this.reviews = reviews;
         notifyDataSetChanged();
     }

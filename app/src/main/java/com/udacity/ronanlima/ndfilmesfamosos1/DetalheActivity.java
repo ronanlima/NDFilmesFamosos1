@@ -2,7 +2,9 @@ package com.udacity.ronanlima.ndfilmesfamosos1;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -28,6 +30,7 @@ import com.google.gson.JsonParser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.ReviewList;
 import com.udacity.ronanlima.ndfilmesfamosos1.data.AppDataBase;
 import com.udacity.ronanlima.ndfilmesfamosos1.service.TheMovieDBConsumer;
 import com.udacity.ronanlima.ndfilmesfamosos1.utils.AppExecutor;
@@ -35,6 +38,7 @@ import com.udacity.ronanlima.ndfilmesfamosos1.utils.NetworkUtils;
 import com.udacity.ronanlima.ndfilmesfamosos1.view.ReviewAdapter;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,12 +47,10 @@ import retrofit2.Call;
 public class DetalheActivity extends AppCompatActivity implements TheMovieDBConsumer.ListenerResultSearchTMDB {
 
     public static final boolean HAS_FIXED_SIZE = true;
-    public static final String BUNDLE_MOVIE_TITLE = "movieTitle";
     public static final String BUNDLE_MOVIE = "movie";
-    public static final String BUNDLE_JSON_MOVIE = "JSON_MOVIE";
+    public static final String BUNDLE_MOVIE_PARCELABLE = "MOVIE_PARCELABLE";
     public static final String BUNDLE_JSON_REVIEW = "JSON_REVIEW";
-    private Integer idMovie;
-    private String originalTitle;
+
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.tv_average_fab)
@@ -69,33 +71,41 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
     NestedScrollView layoutMovieDetail;
     @BindView(R.id.rv_reviews)
     RecyclerView recyclerViewReviews;
+    @BindView(R.id.ll_reviews)
+    LinearLayout linearLayoutReviews;
     private ReviewAdapter reviewAdapter;
-    private JsonObject jsonMovie;
     private JsonObject jsonReview;
     private AppDataBase mDB;
     private Movie movie;
+    private Movie movieDetail;
     private MenuItem menuItem;
     private Palette.Swatch mVibrantSwatch;
+    private MovieDetailViewModel movieDetailViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhe);
         ButterKnife.bind(this);
+        movieDetailViewModel = ViewModelProviders.of(this).get(MovieDetailViewModel.class);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         progressBar.setVisibility(View.VISIBLE);
+
         if (savedInstanceState != null) {
             initScreenFromSavedInstance(savedInstanceState);
         } else if (getIntent().hasExtra(BUNDLE_MOVIE)) {
             movie = getIntent().getParcelableExtra(BUNDLE_MOVIE);
-            originalTitle = movie.getOriginalTitle();
-            idMovie = movie.getId();
-            verifyInternetConnection();
+            if (!movie.isFavorited()) {
+                verifyInternetConnection();
+            } else {
+                initScreenJsonMovie(movie);
+                linearLayoutReviews.setVisibility(View.GONE);
+//                initScreenJsonReview(movieDetailViewModel.getLiveDataReviews().getValue());
+            }
         }
-        collapsingToolbarLayout.setTitle(originalTitle);
+        collapsingToolbarLayout.setTitle(movie.getOriginalTitle());
         setmDB(AppDataBase.getInstance(this));
-        retrieveMovieFromDB(idMovie);
     }
 
     private void retrieveMovieFromDB(Integer idMovie) {
@@ -112,17 +122,15 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
     }
 
     private void initScreenFromSavedInstance(Bundle savedInstanceState) {
-        originalTitle = savedInstanceState.getString(BUNDLE_MOVIE_TITLE);
-        idMovie = savedInstanceState.getInt(BUNDLE_MOVIE);
-        if (savedInstanceState.getString(BUNDLE_JSON_MOVIE) != null) {
-            jsonMovie = (JsonObject) new JsonParser().parse(savedInstanceState.getString(BUNDLE_JSON_MOVIE));
-            initScreenJsonMovie(jsonMovie);
+        if (savedInstanceState.getParcelable(BUNDLE_MOVIE_PARCELABLE) != null) {
+            movieDetail = savedInstanceState.getParcelable(BUNDLE_MOVIE_PARCELABLE);
+            initScreenJsonMovie(movieDetail);
         }
         if (savedInstanceState.getString(BUNDLE_JSON_REVIEW) != null) {
             jsonReview = (JsonObject) new JsonParser().parse(savedInstanceState.getString(BUNDLE_JSON_REVIEW));
-            initScreenJsonReview(jsonReview);
+            initScreenJsonReview(movieDetailViewModel.getLiveDataReviews().getValue());
         }
-        if (savedInstanceState.getString(BUNDLE_JSON_MOVIE) == null || savedInstanceState.getString(BUNDLE_JSON_REVIEW) == null) {
+        if (savedInstanceState.getString(BUNDLE_MOVIE_PARCELABLE) == null || savedInstanceState.getString(BUNDLE_JSON_REVIEW) == null) {
             verifyInternetConnection();
         }
     }
@@ -132,16 +140,16 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         menuItem = menu.findItem(R.id.action_favorite_movie);
+        retrieveMovieFromDB(movie.getId());
         return true;
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(BUNDLE_MOVIE_TITLE, originalTitle);
-        outState.putInt(BUNDLE_MOVIE, idMovie);
-        if (jsonMovie != null) {
-            outState.putString(BUNDLE_JSON_MOVIE, jsonMovie.toString());
+        outState.putParcelable(BUNDLE_MOVIE, movie);
+        if (movieDetail != null) {
+            outState.putParcelable(BUNDLE_MOVIE_PARCELABLE, movieDetail);
         }
         if (jsonReview != null) {
             outState.putString(BUNDLE_JSON_REVIEW, jsonReview.toString());
@@ -186,38 +194,27 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
     private void isFavoriteMovie(boolean isFavorite) {
         if (menuItem != null) {
             menuItem.setIcon(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
-            if (mVibrantSwatch != null) {
+            if (mVibrantSwatch != null && Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                 menuItem.getIcon().setTint(mVibrantSwatch.getTitleTextColor());
             }
         }
     }
 
-    @Override
-    public void onSearchSuccess(JsonObject result) {
-        if (!result.has("results")) {
-            jsonMovie = result;
-            initScreenJsonMovie(result);
-        } else {
-            jsonReview = result;
-            initScreenJsonReview(result);
-        }
-    }
-
-    private void initScreenJsonReview(JsonObject result) {
+    private void initScreenJsonReview(ReviewList result) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewReviews.setLayoutManager(layoutManager);
         recyclerViewReviews.setItemAnimator(new DefaultItemAnimator());
         recyclerViewReviews.setHasFixedSize(HAS_FIXED_SIZE);
         reviewAdapter = new ReviewAdapter();
         recyclerViewReviews.setAdapter(reviewAdapter);
-        reviewAdapter.setReviews(result.getAsJsonArray("results"));
+        reviewAdapter.setReviews(result);
     }
 
-    private void initScreenJsonMovie(JsonObject result) {
+    private void initScreenJsonMovie(Movie result) {
         progressBar.setVisibility(View.INVISIBLE);
         layoutMovieDetail.setVisibility(View.VISIBLE);
-        if (result.get("poster_path") != null) {
-            final RequestCreator creator = Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, result.get("poster_path").getAsString().substring(1)));
+        if (result.getPoster() != null) {
+            final RequestCreator creator = Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, result.getPoster().substring(1)));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -231,9 +228,9 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
             }).start();
             creator.into(ivPoster);
         }
-        tvAverageFab.setText(result.get("vote_average").getAsString());
-        tvSinopse.setText(result.get("overview").getAsString());
-        tvDataLancamento.setText(result.get("release_date").getAsString());
+        tvAverageFab.setText(String.valueOf(result.getVoteAverage()));
+        tvSinopse.setText(result.getOverview());
+        tvDataLancamento.setText(new SimpleDateFormat("yyyy-MM-dd").format(result.getReleaseDate()));
     }
 
     private void setToolbarColor(Bitmap bitmap) {
@@ -247,7 +244,9 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
                     collapsingToolbarLayout.setBackgroundColor(vibrantSwatch.getRgb());
                     collapsingToolbarLayout.setCollapsedTitleTextColor(vibrantSwatch.getTitleTextColor());
                     collapsingToolbarLayout.setExpandedTitleColor(vibrantSwatch.getTitleTextColor());
-                    menuItem.getIcon().setTint(vibrantSwatch.getTitleTextColor());
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+                        menuItem.getIcon().setTint(vibrantSwatch.getTitleTextColor());
+                    }
                 }
             });
 
@@ -265,11 +264,28 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
         layoutMovieDetail.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onSearchSuccess(JsonObject result) {
+
+    }
+
     private void verifyInternetConnection() {
         if (NetworkUtils.isConnected(this)) {
             linearNoWifi.setVisibility(View.INVISIBLE);
-            TheMovieDBConsumer.getMovieDetail(this, idMovie);
-            TheMovieDBConsumer.getMovieReview(this, idMovie);
+            MovieDetailViewModel mDetailViewModel = movieDetailViewModel.initDetail(movie.getId());
+            mDetailViewModel.getLiveDataDetail().observe(this, new Observer<Movie>() {
+                @Override
+                public void onChanged(@Nullable Movie movie) {
+                    initScreenJsonMovie(movie);
+                }
+            });
+            mDetailViewModel.initSearchReviews(movie.getId());
+            mDetailViewModel.getLiveDataReviews().observe(this, new Observer<ReviewList>() {
+                @Override
+                public void onChanged(@Nullable ReviewList reviewList) {
+                    initScreenJsonReview(reviewList);
+                }
+            });
         } else {
             progressBar.setVisibility(View.INVISIBLE);
             linearNoWifi.setVisibility(View.VISIBLE);
