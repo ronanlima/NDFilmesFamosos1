@@ -4,6 +4,7 @@
     <string name="action_most_popular">Most popular</string>
     <string name="label_movie_name">Movie</string>
     <string name="msg_no_wifi">Sem conexão com a internet</string>
+    <string name="msg_no_favorites">Você ainda não favoritou nenhum dos filmes</string>
     <string name="label_sinopse">Sinopse</string>
     <string name="label_data_lancamento">Data de lançamento</string>
     <string name="label_reviews">Revisões do público</string>
