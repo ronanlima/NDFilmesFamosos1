@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.udacity.ronanlima.ndfilmesfamosos1.R;
@@ -33,6 +34,24 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewVH> 
         Review review = getReviews().getReviews().get(position);
         holder.tvUserName.setText(review.getAuthor());
         holder.tvReview.setText(review.getContent());
+        hidePreviousImage(holder, position);
+        hideNextImage(holder, position);
+    }
+
+    private void hideNextImage(ReviewVH holder, int position) {
+        if (position == getItemCount() - 1) {
+            holder.ivNext.setVisibility(View.GONE);
+        } else {
+            holder.ivNext.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hidePreviousImage(ReviewVH holder, int position) {
+        if (position == 0) {
+            holder.ivPrev.setVisibility(View.GONE);
+        } else {
+            holder.ivPrev.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -54,6 +73,10 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewVH> 
         public TextView tvUserName;
         @BindView(R.id.tv_review)
         public TextView tvReview;
+        @BindView(R.id.iv_next)
+        ImageView ivNext;
+        @BindView(R.id.iv_prev)
+        ImageView ivPrev;
 
         public ReviewVH(View itemView) {
             super(itemView);

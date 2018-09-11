@@ -3,7 +3,9 @@ package com.udacity.ronanlima.ndfilmesfamosos1;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,11 +33,14 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
 import com.udacity.ronanlima.ndfilmesfamosos1.bean.ReviewList;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Video;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.VideoList;
 import com.udacity.ronanlima.ndfilmesfamosos1.data.AppDataBase;
 import com.udacity.ronanlima.ndfilmesfamosos1.service.TheMovieDBConsumer;
 import com.udacity.ronanlima.ndfilmesfamosos1.utils.AppExecutor;
 import com.udacity.ronanlima.ndfilmesfamosos1.utils.NetworkUtils;
 import com.udacity.ronanlima.ndfilmesfamosos1.view.ReviewAdapter;
+import com.udacity.ronanlima.ndfilmesfamosos1.view.VideoAdapter;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -44,12 +49,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 
-public class DetalheActivity extends AppCompatActivity implements TheMovieDBConsumer.ListenerResultSearchTMDB {
+public class DetalheActivity extends AppCompatActivity implements TheMovieDBConsumer.ListenerResultSearchTMDB, VideoAdapter.VideoClickListener {
 
     public static final boolean HAS_FIXED_SIZE = true;
     public static final String BUNDLE_MOVIE = "movie";
     public static final String BUNDLE_MOVIE_PARCELABLE = "MOVIE_PARCELABLE";
     public static final String BUNDLE_JSON_REVIEW = "JSON_REVIEW";
+    public static final String YOUTUBE_URL = "http://www.youtube.com/watch?v=";
 
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -71,9 +77,12 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
     NestedScrollView layoutMovieDetail;
     @BindView(R.id.rv_reviews)
     RecyclerView recyclerViewReviews;
+    @BindView(R.id.rv_videos)
+    RecyclerView recyclerViewVideos;
     @BindView(R.id.ll_reviews)
     LinearLayout linearLayoutReviews;
     private ReviewAdapter reviewAdapter;
+    private VideoAdapter videoAdapter;
     private JsonObject jsonReview;
     private AppDataBase mDB;
     private Movie movie;
@@ -200,6 +209,16 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
         }
     }
 
+    private void initScreenVideos(VideoList videoList) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewVideos.setLayoutManager(layoutManager);
+        recyclerViewVideos.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewVideos.setHasFixedSize(HAS_FIXED_SIZE);
+        videoAdapter = new VideoAdapter(this);
+        recyclerViewVideos.setAdapter(videoAdapter);
+        videoAdapter.setVideos(videoList);
+    }
+
     private void initScreenJsonReview(ReviewList result) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewReviews.setLayoutManager(layoutManager);
@@ -286,6 +305,13 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
                     initScreenJsonReview(reviewList);
                 }
             });
+            mDetailViewModel.initSearchVideos(movie.getId());
+            mDetailViewModel.getLiveDataVideos().observe(this, new Observer<VideoList>() {
+                @Override
+                public void onChanged(@Nullable VideoList videoList) {
+                    initScreenVideos(videoList);
+                }
+            });
         } else {
             progressBar.setVisibility(View.INVISIBLE);
             linearNoWifi.setVisibility(View.VISIBLE);
@@ -299,5 +325,15 @@ public class DetalheActivity extends AppCompatActivity implements TheMovieDBCons
 
     public void setmDB(AppDataBase mDB) {
         this.mDB = mDB;
+    }
+
+    @Override
+    public void onClickVideo(Video video) {
+        String urlVideo = String.format("%s%s", YOUTUBE_URL, video.getKey());
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlVideo));
+        Intent chooser = Intent.createChooser(intent, "Abrir com");
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(chooser);
+        }
     }
 }

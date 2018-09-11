@@ -29,11 +29,15 @@ public class MovieDetailViewModel extends ViewModel {
         return this;
     }
 
-    public MutableLiveData<VideoList> getLiveDataVideos(Integer movieId) {
+    public MovieDetailViewModel initSearchVideos(Integer movieId) {
         if (liveDataVideos == null) {
             liveDataVideos = new MutableLiveData<>();
-            TheMovieDBConsumer.getMovieReview(null, this, movieId);
+            TheMovieDBConsumer.getVideos(this, movieId);
         }
+        return this;
+    }
+
+    public MutableLiveData<VideoList> getLiveDataVideos() {
         return liveDataVideos;
     }
 

@@ -82,6 +82,25 @@
                 tools:text="04/04/2018" />
 
             <LinearLayout
+                android:id="@+id/ll_videos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_videos"
+                    style="@style/style_label_movie_detail"
+                    android:text="@string/label_videos" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_videos"
+                    style="@style/style_recyclerview_movie_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/shape_recyclerview" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/ll_reviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

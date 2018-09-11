@@ -1,13 +1,12 @@
 package com.udacity.ronanlima.ndfilmesfamosos1.service;
 
-import android.arch.lifecycle.MutableLiveData;
-
 import com.google.gson.JsonObject;
 import com.udacity.ronanlima.ndfilmesfamosos1.BuildConfig;
 import com.udacity.ronanlima.ndfilmesfamosos1.MovieDetailViewModel;
 import com.udacity.ronanlima.ndfilmesfamosos1.MovieListViewModel;
 import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
 import com.udacity.ronanlima.ndfilmesfamosos1.bean.ReviewList;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.VideoList;
 
 import java.io.Serializable;
 
@@ -59,18 +58,34 @@ public class TheMovieDBConsumer {
             @Override
             public void onResponse(Call<ReviewList> call, Response<ReviewList> response) {
                 if (response.isSuccessful() && response.body() != null) {
-//                    listener.onSearchSuccess(response.body());
                     movieDetailViewModel.getLiveDataReviews().postValue(response.body());
 
                 } else {
-//                    listener.onSearchError(call, new Throwable());
                     movieDetailViewModel.getLiveDataReviews().setValue(null);
                 }
             }
 
             @Override
             public void onFailure(Call<ReviewList> call, Throwable t) {
-//                listener.onSearchError(call, t);
+                movieDetailViewModel.getLiveDataReviews().setValue(null);
+            }
+        });
+    }
+
+    public static void getVideos(final MovieDetailViewModel movieDetailViewModel, Integer id) {
+        serviceSingleton.getRetrofit().create(TMDBInterface.class).getVideos(id, BuildConfig.API_KEY).enqueue(new Callback<VideoList>() {
+            @Override
+            public void onResponse(Call<VideoList> call, Response<VideoList> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    movieDetailViewModel.getLiveDataVideos().postValue(response.body());
+
+                } else {
+                    movieDetailViewModel.getLiveDataReviews().setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VideoList> call, Throwable t) {
                 movieDetailViewModel.getLiveDataReviews().setValue(null);
             }
         });
