@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.udacity.ronanlima.ndfilmesfamosos1.BuildConfig;
 import com.udacity.ronanlima.ndfilmesfamosos1.R;
-import com.udacity.ronanlima.ndfilmesfamosos1.bean.TheMovieDB;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private List<TheMovieDB> listMovies;
+    private List<Movie> listMovies;
     private AdapterClickListener adapterClickListener;
 
     @Override
@@ -34,31 +34,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        final TheMovieDB theMovieDB = listMovies.get(position);
-        holder.getTvMovieName().setText(theMovieDB.getTitle());
-        if (theMovieDB.getPoster_path() != null) {
-            Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, theMovieDB.getPoster_path().substring(1))).into(holder.getIvMovie());
+        final Movie movie = listMovies.get(position);
+        holder.getTvMovieName().setText(movie.getTitle());
+        if (movie.getPoster() != null) {
+            Picasso.get().load(String.format("%s%s", BuildConfig.BASE_URL_IMG_POSTER, movie.getPoster().substring(1))).into(holder.getIvMovie());
         }
         holder.getIvMovie().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapterClickListener.onMovieClicked(theMovieDB.getId(), theMovieDB.getOriginal_title());
+                adapterClickListener.onMovieClicked(movie);
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return listMovies != null ? listMovies.size() : 0;
-    }
-
-    public List<TheMovieDB> getListMovies() {
-        return listMovies;
-    }
-
-    public void setListMovies(List<TheMovieDB> listMovies) {
-        this.listMovies = listMovies;
-        notifyDataSetChanged();
     }
 
     public AdapterClickListener getAdapterClickListener() {
@@ -69,8 +55,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         this.adapterClickListener = adapterClickListener;
     }
 
+    @Override
+    public int getItemCount() {
+        return listMovies != null ? listMovies.size() : 0;
+    }
+
+    public List<Movie> getListMovies() {
+        return listMovies;
+    }
+
+    public void setListMovies(List<Movie> listMovies) {
+        this.listMovies = listMovies;
+        notifyDataSetChanged();
+    }
+
     public interface AdapterClickListener extends Serializable {
-        void onMovieClicked(Integer idMovie, String originalTitle);
+        void onMovieClicked(Movie movie);
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {

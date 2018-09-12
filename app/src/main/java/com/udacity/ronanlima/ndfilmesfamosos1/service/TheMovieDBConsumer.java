@@ -2,6 +2,11 @@ package com.udacity.ronanlima.ndfilmesfamosos1.service;
 
 import com.google.gson.JsonObject;
 import com.udacity.ronanlima.ndfilmesfamosos1.BuildConfig;
+import com.udacity.ronanlima.ndfilmesfamosos1.MovieDetailViewModel;
+import com.udacity.ronanlima.ndfilmesfamosos1.MovieListViewModel;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.Movie;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.ReviewList;
+import com.udacity.ronanlima.ndfilmesfamosos1.bean.VideoList;
 
 import java.io.Serializable;
 
@@ -12,12 +17,12 @@ import retrofit2.Response;
 public class TheMovieDBConsumer {
     private static RetrofitServiceSingleton serviceSingleton = RetrofitServiceSingleton.getInstance();
 
-    public static void getPopularMovies(final ListenerResultSearchTMDB listener) {
-        serviceSingleton.getRetrofit().create(TMDBInterface.class).getMostPopularMovies(BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
+    public static void getMovies(final ListenerResultSearchTMDB listener, final MovieListViewModel movieListViewModel, String path) {
+        serviceSingleton.getRetrofit().create(TMDBInterface.class).getMovies(path, BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    listener.onSearchSuccess(response.body());
+                    movieListViewModel.getMovieLiveData().postValue(response.body());
                 } else {
                     listener.onSearchError(call, new Throwable());
                 }
@@ -30,38 +35,58 @@ public class TheMovieDBConsumer {
         });
     }
 
-    public static void getTopRatedMovies(final ListenerResultSearchTMDB listener) {
-        serviceSingleton.getRetrofit().create(TMDBInterface.class).getTopRatedMovies(BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
+    public static void getMovieDetail(final MovieDetailViewModel detailViewModel, Integer id) {
+        serviceSingleton.getRetrofit().create(TMDBInterface.class).getMovieDetail(id, BuildConfig.API_KEY).enqueue(new Callback<Movie>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+            public void onResponse(Call<Movie> call, Response<Movie> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    listener.onSearchSuccess(response.body());
+                    detailViewModel.getLiveDataDetail().postValue(response.body());
                 } else {
-                    listener.onSearchError(call, new Throwable());
+                    detailViewModel.getLiveDataDetail().postValue(null);
                 }
             }
 
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                listener.onSearchError(call, t);
+            public void onFailure(Call<Movie> call, Throwable t) {
+                detailViewModel.getLiveDataDetail().postValue(null);
             }
         });
     }
 
-    public static void getInfoAboutMovie(final ListenerResultSearchTMDB listener, Integer id) {
-        serviceSingleton.getRetrofit().create(TMDBInterface.class).getInfoAboutMovie(id, BuildConfig.API_KEY).enqueue(new Callback<JsonObject>() {
+    public static void getMovieReview(final ListenerResultSearchTMDB listener, final MovieDetailViewModel movieDetailViewModel, Integer id) {
+        serviceSingleton.getRetrofit().create(TMDBInterface.class).getMovieReviews(id, BuildConfig.API_KEY).enqueue(new Callback<ReviewList>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+            public void onResponse(Call<ReviewList> call, Response<ReviewList> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    listener.onSearchSuccess(response.body());
+                    movieDetailViewModel.getLiveDataReviews().postValue(response.body());
+
                 } else {
-                    listener.onSearchError(call, new Throwable());
+                    movieDetailViewModel.getLiveDataReviews().setValue(null);
                 }
             }
 
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                listener.onSearchError(call, t);
+            public void onFailure(Call<ReviewList> call, Throwable t) {
+                movieDetailViewModel.getLiveDataReviews().setValue(null);
+            }
+        });
+    }
+
+    public static void getVideos(final MovieDetailViewModel movieDetailViewModel, Integer id) {
+        serviceSingleton.getRetrofit().create(TMDBInterface.class).getVideos(id, BuildConfig.API_KEY).enqueue(new Callback<VideoList>() {
+            @Override
+            public void onResponse(Call<VideoList> call, Response<VideoList> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    movieDetailViewModel.getLiveDataVideos().postValue(response.body());
+
+                } else {
+                    movieDetailViewModel.getLiveDataReviews().setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VideoList> call, Throwable t) {
+                movieDetailViewModel.getLiveDataReviews().setValue(null);
             }
         });
     }

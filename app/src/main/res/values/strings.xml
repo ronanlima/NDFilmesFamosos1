@@ -4,7 +4,17 @@
     <string name="action_most_popular">Most popular</string>
     <string name="label_movie_name">Movie</string>
     <string name="msg_no_wifi">Sem conexão com a internet</string>
+    <string name="msg_no_favorites">Você ainda não favoritou nenhum dos filmes</string>
     <string name="label_sinopse">Sinopse</string>
     <string name="label_data_lancamento">Data de lançamento</string>
+    <string name="label_reviews">Revisões do público</string>
+    <string name="label_videos">Videos</string>
     <string name="content_description_poster_movie">Imagem do filme</string>
+    <string name="tools_text_sinopse_filme">Aqui vai a incrível sinopse deste filme aclamado pela crítica</string>
+    <string name="tools_text_name_video">Awesome - The last trailer of Avengers</string>
+    <string name="review_example">It is a bold undertaking, to readjust what is expected of the MCU/Avengers formula, and there are moments when the sheer scale and momentum match the narrative ambition...</string>
+    <string name="item_favorite">Favoritos</string>
+    <string name="item_rated">Qualificados</string>
+    <string name="item_popular">Populares</string>
+    <string name="action_favorite">Favorite</string>
 </resources>
