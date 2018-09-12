@@ -15,12 +15,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_KEY", '"0e59d0d4cebf9cd24c581b082db608fe"'
+            buildConfigField "String", "API_KEY", '"CHANGEME"'
             buildConfigField "String", "BASE_URL_TMDB", '"https://api.themoviedb.org/"'
             buildConfigField "String", "BASE_URL_IMG_POSTER", '"https://image.tmdb.org/t/p/w500/"'
         }
         debug {
-            buildConfigField "String", "API_KEY", '"0e59d0d4cebf9cd24c581b082db608fe"'
+            buildConfigField "String", "API_KEY", '"CHANGEME"'
             buildConfigField "String", "BASE_URL_TMDB", '"https://api.themoviedb.org/"'
             buildConfigField "String", "BASE_URL_IMG_POSTER", '"https://image.tmdb.org/t/p/w500/"'
         }
